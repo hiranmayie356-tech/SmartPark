@@ -3,21 +3,18 @@
 <head>
   <title>Parking Booking</title>
 
-  <!-- Google Identity Services library -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
   <h1>Student Parking Booking</h1>
 
-  <!-- Google Sign-In configuration -->
   <div id="g_id_onload"
-       data-client_id="YOUR_CLIENT_ID"
+       data-client_id="389348627634-rrp09se9ajiss6qhb9tnfqdgf106105p.apps.googleusercontent.com"
        data-callback="handleCredentialResponse"
        data-auto_prompt="false">
   </div>
 
-  <!-- Google Sign-In button -->
   <div class="g_id_signin"
        data-type="standard"
        data-size="large"
@@ -27,7 +24,6 @@
        data-logo_alignment="left">
   </div>
 
-  <!-- Booking form (hidden until login) -->
   <div id="booking-form" style="display:none;">
     <h2>Book a Slot</h2>
     <input type="text" id="slot" placeholder="Slot Number"><br><br>
@@ -36,20 +32,16 @@
     <button onclick="bookSlot()">Book</button>
   </div>
 
-  <!-- JavaScript logic -->
   <script>
     let userEmail = "";
 
-    // Called automatically after Google login
     function handleCredentialResponse(response) {
       const data = parseJwt(response.credential);
       userEmail = data.email;
 
-      // Show booking form after successful login
       document.getElementById("booking-form").style.display = "block";
     }
 
-    // Decode the JWT token from Google
     function parseJwt(token) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -62,13 +54,13 @@
       return JSON.parse(jsonPayload);
     }
 
-    // Send booking data to Apps Script backend
     function bookSlot() {
       const slot = document.getElementById("slot").value;
       const date = document.getElementById("date").value;
       const time = document.getElementById("time").value;
 
-      fetch("YOUR_WEB_APP_URL/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbyM-a5gIz8nS5PzysSU8hJDoe_gjRyvHF9-7j30chWl9qEMPZU0LktQq2plMRnOGrs3/exec
+", {
         method: "POST",
         body: JSON.stringify({
           slot: slot,
@@ -86,3 +78,4 @@
 
 </body>
 </html>
+
