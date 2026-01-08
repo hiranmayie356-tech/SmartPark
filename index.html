@@ -37,13 +37,12 @@
   <script>
     let userEmail = "";
 
+    window.handleCredentialResponse = function (response) {
+  const data = parseJwt(response.credential);
+  userEmail = data.email;
+  document.getElementById("booking-form").style.display = "block";
+};
     
-    function handleCredentialResponse(response) {
-      const data = parseJwt(response.credential);
-      userEmail = data.email;
-
-      document.getElementById("booking-form").style.display = "block";
-    }
 
     function parseJwt(token) {
       const base64Url = token.split('.')[1];
@@ -83,3 +82,4 @@
 
 
 -
+
