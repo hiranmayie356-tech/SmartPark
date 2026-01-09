@@ -2,6 +2,59 @@
 <html>
 <head>
   <title>Parking Booking</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  .container {
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+  }
+
+  #booking-form {
+    margin-top: 20px;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+
+  button:hover {
+    background-color: #1558b0;
+  }
+</style>
+
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -35,44 +88,46 @@
 
   
   <script>
-  let userEmail = "";
+   let userEmail = "";
 
-  function handleCredentialResponse(response) {
-    const data = parseJwt(response.credential);
-    userEmail = data.email;
+    window.handleCredentialResponse = function (response) {
+  const data = parseJwt(response.credential);
+  userEmail = data.email;
+  document.getElementById("booking-form").style.display = "block";
+};
+    
 
-    document.getElementById("booking-form").style.display = "block";
-  }
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    }
 
-  function parseJwt(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  }
+    function bookSlot() {
+      const slot = document.getElementById("slot").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
 
-  function bookSlot() {
-    const slot = document.getElementById("slot").value;
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("time").value;
-
-    const url = new URL("https://script.google.com/macros/s/AKfycbzC_N8twLLNp2mroLpqeLG8XLYY_vwCA5d8ewA2CLvGA4oyiaONR-TvT7RSQZk2xI1smw/exec");
-
-    url.searchParams.append("slot", slot);
-    url.searchParams.append("email", userEmail);
-    url.searchParams.append("date", date);
-    url.searchParams.append("time", time);
-
-    fetch(url)
+      fetch("https://script.google.com/macros/s/AKfycbzUnjDkCsMyvAi5Sv3EbIKOtEWV9J1rORbwOcjI3fIQTl-1cv_6FarneszQ2TFzkhzKRQ/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          slot: slot,
+          name: userEmail.split("@")[0],
+          email: userEmail,
+          date: date,
+          time: time
+        })
+      })
       .then(res => res.json())
       .then(() => alert("Booking successful!"))
       .catch(err => alert("Error: " + err));
-  }
+    }
 
   </script>
 
@@ -81,6 +136,7 @@
 
 
 -
+
 
 
 
