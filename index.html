@@ -35,46 +35,45 @@
 
   
   <script>
-    let userEmail = "";
+  let userEmail = "";
 
-    window.handleCredentialResponse = function (response) {
-  const data = parseJwt(response.credential);
-  userEmail = data.email;
-  document.getElementById("booking-form").style.display = "block";
-};
-    
+  function handleCredentialResponse(response) {
+    const data = parseJwt(response.credential);
+    userEmail = data.email;
 
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      return JSON.parse(jsonPayload);
-    }
+    document.getElementById("booking-form").style.display = "block";
+  }
 
-    function bookSlot() {
-      const slot = document.getElementById("slot").value;
-      const date = document.getElementById("date").value;
-      const time = document.getElementById("time").value;
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  }
 
-      fetch("https://script.google.com/macros/s/AKfycbzUnjDkCsMyvAi5Sv3EbIKOtEWV9J1rORbwOcjI3fIQTl-1cv_6FarneszQ2TFzkhzKRQ/exec", {
-        method: "POST",
-        body: JSON.stringify({
-          slot: slot,
-          name: userEmail.split("@")[0],
-          email: userEmail,
-          date: date,
-          time: time
-        })
-      })
+  function bookSlot() {
+    const slot = document.getElementById("slot").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+
+    const url = new URL("https://script.google.com/macros/s/AKfycbzC_N8twLLNp2mroLpqeLG8XLYY_vwCA5d8ewA2CLvGA4oyiaONR-TvT7RSQZk2xI1smw/exec");
+
+    url.searchParams.append("slot", slot);
+    url.searchParams.append("email", userEmail);
+    url.searchParams.append("date", date);
+    url.searchParams.append("time", time);
+
+    fetch(url)
       .then(res => res.json())
       .then(() => alert("Booking successful!"))
       .catch(err => alert("Error: " + err));
-    }
+  }
+
   </script>
 
 </body>
@@ -82,6 +81,7 @@
 
 
 -
+
 
 
 
